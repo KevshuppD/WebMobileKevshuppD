@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca de Cursos</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        button { margin: 5px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #f4f4f4; padding: 10px; border: 1px solid #ddd; }
+        form { margin-bottom: 20px; }
+        input, select { margin: 5px; padding: 8px; width: 200px; }
+    </style>
+</head>
+<body>
+    <h1>Biblioteca Digital de Cursos</h1>
+    <p><strong>Entrega 1 de Web Mobile - Kevin Castro</strong></p>
+
+    <h2>Requisitos Cumplidos</h2>
+    <ul>
+        <li>? CRUD completo para Cursos (LISTAR, INSERTAR, ACTUALIZAR con dropdown, ELIMINAR)</li>
+        <li>? CRUD completo para Instructores (LISTAR, INSERTAR, ACTUALIZAR con dropdown, ELIMINAR)</li>
+        <li>? CRUD completo para Estudiantes (LISTAR, INSERTAR, ACTUALIZAR con dropdown, ELIMINAR)</li>
+        <li>? CRUD completo para Inscripciones (LISTAR, INSERTAR, ACTUALIZAR con dropdown, ELIMINAR)</li>
+    </ul>
+
+    <h2>Log</h2>
+    <div id="log" style="background: #eee; padding: 10px; margin-bottom: 20px; max-height: 200px; overflow-y: auto;"></div>
+
+    <h2>Cursos</h2>
+    <button onclick="showSection('list')">Listar</button>
+    <button onclick="showSection('insert')">Insertar</button>
+    <button onclick="showSection('update')">Actualizar</button>
+    <button onclick="showSection('delete')">Eliminar</button>
+
+    <div id="listDiv" style="display:none;">
+        <div id="cursosList"></div>
+    </div>
+
+    <div id="insertDiv" style="display:none;">
+        <h3>Crear Curso</h3>
+        <form id="createCursoForm">
+            <input type="text" id="titulo" placeholder="Título" required minlength="5"><br>
+            <textarea id="descripcion" placeholder="Descripción" required minlength="20" maxlength="500"></textarea><br>
+            <select id="categoria" required>
+                <option value="">Selecciona Categoría</option>
+                <option value="programacion">Programación</option>
+                <option value="diseño">Diseño</option>
+                <option value="marketing">Marketing</option>
+                <option value="finanzas">Finanzas</option>
+                <option value="otro">Otro</option>
+            </select><br>
+            <select id="nivel" required>
+                <option value="">Selecciona Nivel</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+            </select><br>
+            <input type="number" id="horas" placeholder="Horas" required min="1"><br>
+            <input type="number" id="precio" placeholder="Precio" required min="0" step="0.01"><br>
+            <input type="date" id="fechaInicio" required><br>
+            <input type="date" id="fechaFin" required><br>
+            <select id="estado" required>
+                <option value="">Selecciona Estado</option>
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+                <option value="archived">Archived</option>
+            </select><br>
+            <button type="submit">Crear Curso</button>
+        </form>
+    </div>
+
+    <div id="updateDiv" style="display:none;">
+        <h3>Actualizar Curso</h3>
+        <select id="updateCursoSelect" onchange="loadCursoForUpdate()">
+            <option value="">Selecciona un Curso</option>
+        </select><br>
+        <form id="updateCursoForm">
+            <input type="hidden" id="updateId">
+            <input type="text" id="updateTitulo" placeholder="Nuevo Título" minlength="5"><br>
+            <textarea id="updateDescripcion" placeholder="Nueva Descripción" minlength="20" maxlength="500"></textarea><br>
+            <select id="updateCategoria">
+                <option value="">Selecciona Categoría</option>
+                <option value="programacion">Programación</option>
+                <option value="diseño">Diseño</option>
+                <option value="marketing">Marketing</option>
+                <option value="finanzas">Finanzas</option>
+                <option value="otro">Otro</option>
+            </select><br>
+            <select id="updateNivel">
+                <option value="">Selecciona Nivel</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+            </select><br>
+            <input type="number" id="updateHoras" placeholder="Nuevas Horas" min="1"><br>
+            <input type="number" id="updatePrecio" placeholder="Nuevo Precio" min="0" step="0.01"><br>
+            <input type="date" id="updateFechaInicio"><br>
+            <input type="date" id="updateFechaFin"><br>
+            <select id="updateEstado">
+                <option value="">Selecciona Estado</option>
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+                <option value="archived">Archived</option>
+            </select><br>
+            <button type="submit">Actualizar Curso</button>
+        </form>
+    </div>
+
+    <div id="deleteDiv" style="display:none;">
+        <h3>Eliminar Curso</h3>
+        <form id="deleteCursoForm">
+            <input type="text" id="deleteId" placeholder="ID del Curso" required><br>
+            <button type="submit">Eliminar Curso</button>
+        </form>
+    </div>
+
+    <h2>Instructores</h2>
+    <button onclick="showSectionInst('list')">Listar</button>
+    <button onclick="showSectionInst('insert')">Insertar</button>
+    <button onclick="showSectionInst('update')">Actualizar</button>
+    <button onclick="showSectionInst('delete')">Eliminar</button>
+
+    <div id="listInstDiv" style="display:none;">
+        <div id="instructoresList"></div>
+    </div>
+
+    <div id="insertInstDiv" style="display:block;">
+        <h3>Crear Instructor</h3>
+        <form id="createInstructorForm">
+            <input type="text" id="instNombre" placeholder="Nombre" required><br>
+            <input type="email" id="instEmail" placeholder="Email" required><br>
+            <input type="text" id="instEspecialidad" placeholder="Especialidad" required><br>
+            <button type="submit">Crear Instructor</button>
+        </form>
+    </div>
+
+    <div id="updateInstDiv" style="display:none;">
+        <h3>Actualizar Instructor</h3>
+        <select id="updateInstSelect" onchange="loadInstForUpdate()">
+            <option value="">Selecciona un Instructor</option>
+        </select><br>
+        <form id="updateInstructorForm">
+            <input type="hidden" id="updateInstId">
+            <input type="text" id="updateInstNombre" placeholder="Nuevo Nombre" required><br>
+            <input type="email" id="updateInstEmail" placeholder="Nuevo Email" required><br>
+            <input type="text" id="updateInstEspecialidad" placeholder="Nueva Especialidad" required><br>
+            <button type="submit">Actualizar Instructor</button>
+        </form>
+    </div>
+
+    <div id="deleteInstDiv" style="display:none;">
+        <h3>Eliminar Instructor</h3>
+        <form id="deleteInstructorForm">
+            <input type="text" id="deleteInstId" placeholder="ID del Instructor" required><br>
+            <button type="submit">Eliminar Instructor</button>
+        </form>
+    </div>
+
+    <h2>Estudiantes</h2>
+    <button onclick="showSectionEst('list')">Listar</button>
+    <button onclick="showSectionEst('insert')">Insertar</button>
+    <button onclick="showSectionEst('update')">Actualizar</button>
+    <button onclick="showSectionEst('delete')">Eliminar</button>
+
+    <div id="listEstDiv" style="display:none;">
+        <div id="estudiantesList"></div>
+    </div>
+
+    <div id="insertEstDiv" style="display:block;">
+        <h3>Crear Estudiante</h3>
+        <form id="createEstudianteForm">
+            <input type="text" id="estNombre" placeholder="Nombre" required><br>
+            <input type="email" id="estEmail" placeholder="Email" required><br>
+            <input type="date" id="estFechaRegistro" required><br>
+            <button type="submit">Crear Estudiante</button>
+        </form>
+    </div>
+
+    <div id="updateEstDiv" style="display:none;">
+        <h3>Actualizar Estudiante</h3>
+        <select id="updateEstSelect" onchange="loadEstForUpdate()">
+            <option value="">Selecciona un Estudiante</option>
+        </select><br>
+        <form id="updateEstudianteForm">
+            <input type="hidden" id="updateEstId">
+            <input type="text" id="updateEstNombre" placeholder="Nuevo Nombre" required><br>
+            <input type="email" id="updateEstEmail" placeholder="Nuevo Email" required><br>
+            <input type="date" id="updateEstFechaRegistro" required><br>
+            <button type="submit">Actualizar Estudiante</button>
+        </form>
+    </div>
+
+    <div id="deleteEstDiv" style="display:none;">
+        <h3>Eliminar Estudiante</h3>
+        <form id="deleteEstudianteForm">
+            <input type="text" id="deleteEstId" placeholder="ID del Estudiante" required><br>
+            <button type="submit">Eliminar Estudiante</button>
+        </form>
+    </div>
+
+    <h2>Inscripciones</h2>
+    <button onclick="showSectionInsc('list')">Listar</button>
+    <button onclick="showSectionInsc('insert')">Insertar</button>
+    <button onclick="showSectionInsc('update')">Actualizar</button>
+    <button onclick="showSectionInsc('delete')">Eliminar</button>
+
+    <div id="listInscDiv" style="display:none;">
+        <div id="inscripcionesList"></div>
+    </div>
+
+    <div id="insertInscDiv" style="display:block;">
+        <h3>Crear Inscripción</h3>
+        <form id="createInscripcionForm">
+            <input type="text" id="inscCursoId" placeholder="Curso ID" required><br>
+            <input type="text" id="inscEstudianteId" placeholder="Estudiante ID" required><br>
+            <input type="date" id="inscFechaRegistro" required><br>
+            <select id="inscEstado" required>
+                <option value="">Selecciona Estado</option>
+                <option value="activa">Activa</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="cancelada">Cancelada</option>
+            </select><br>
+            <button type="submit">Crear Inscripción</button>
+        </form>
+    </div>
+
+    <div id="updateInscDiv" style="display:none;">
+        <h3>Actualizar Inscripción</h3>
+        <select id="updateInscSelect" onchange="loadInscForUpdate()">
+            <option value="">Selecciona una Inscripción</option>
+        </select><br>
+        <form id="updateInscripcionForm">
+            <input type="hidden" id="updateInscId">
+            <input type="text" id="updateInscCursoId" placeholder="Nuevo Curso ID" required><br>
+            <input type="text" id="updateInscEstudianteId" placeholder="Nuevo Estudiante ID" required><br>
+            <input type="date" id="updateInscFechaRegistro" required><br>
+            <select id="updateInscEstado" required>
+                <option value="">Selecciona Estado</option>
+                <option value="activa">Activa</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="cancelada">Cancelada</option>
+            </select><br>
+            <button type="submit">Actualizar Inscripción</button>
+        </form>
+    </div>
+
+    <div id="deleteInscDiv" style="display:none;">
+        <h3>Eliminar Inscripción</h3>
+        <form id="deleteInscripcionForm">
+            <input type="text" id="deleteInscId" placeholder="ID de la Inscripción" required><br>
+            <button type="submit">Eliminar Inscripción</button>
+        </form>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<p>[${timestamp}] ${message}</p>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function showSection(section) {
+            document.getElementById('listDiv').style.display = section === 'list' ? 'block' : 'none';
+            document.getElementById('insertDiv').style.display = section === 'insert' ? 'block' : 'none';
+            document.getElementById('updateDiv').style.display = section === 'update' ? 'block' : 'none';
+            document.getElementById('deleteDiv').style.display = section === 'delete' ? 'block' : 'none';
+            if (section === 'list') {
+                listCursos();
+            }
+            if (section === 'update') {
+                populateUpdateSelect();
+            }
+        }
+
+        function showSectionInst(section) {
+            document.getElementById('listInstDiv').style.display = section === 'list' ? 'block' : 'none';
+            document.getElementById('insertInstDiv').style.display = section === 'insert' ? 'block' : 'none';
+            document.getElementById('updateInstDiv').style.display = section === 'update' ? 'block' : 'none';
+            document.getElementById('deleteInstDiv').style.display = section === 'delete' ? 'block' : 'none';
+            if (section === 'list') {
+                listInstructores();
+            }
+            if (section === 'update') {
+                populateUpdateInstSelect();
+            }
+        }
+
+        function showSectionEst(section) {
+            document.getElementById('listEstDiv').style.display = section === 'list' ? 'block' : 'none';
+            document.getElementById('insertEstDiv').style.display = section === 'insert' ? 'block' : 'none';
+            document.getElementById('updateEstDiv').style.display = section === 'update' ? 'block' : 'none';
+            document.getElementById('deleteEstDiv').style.display = section === 'delete' ? 'block' : 'none';
+            if (section === 'list') {
+                listEstudiantes();
+            }
+            if (section === 'update') {
+                populateUpdateEstSelect();
+            }
+        }
+
+        function showSectionInsc(section) {
+            document.getElementById('listInscDiv').style.display = section === 'list' ? 'block' : 'none';
+            document.getElementById('insertInscDiv').style.display = section === 'insert' ? 'block' : 'none';
+            document.getElementById('updateInscDiv').style.display = section === 'update' ? 'block' : 'none';
+            document.getElementById('deleteInscDiv').style.display = section === 'delete' ? 'block' : 'none';
+            if (section === 'list') {
+                listInscripciones();
+            }
+            if (section === 'update') {
+                populateUpdateInscSelect();
+            }
+        }
+
+        async function populateUpdateSelect() {
+            try {
+                const res = await fetch(`${API_BASE}/cursos`);
+                const data = await res.json();
+                const select = document.getElementById('updateCursoSelect');
+                select.innerHTML = '<option value="">Selecciona un Curso</option>';
+                data.forEach(curso => {
+                    const option = document.createElement('option');
+                    option.value = curso._id;
+                    option.textContent = curso.titulo;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                log('Error al cargar cursos para actualizar: ' + error.message);
+            }
+        }
+
+        async function populateUpdateInstSelect() {
+            try {
+                const res = await fetch(`${API_BASE}/instructores`);
+                const data = await res.json();
+                const select = document.getElementById('updateInstSelect');
+                select.innerHTML = '<option value="">Selecciona un Instructor</option>';
+                data.forEach(inst => {
+                    const option = document.createElement('option');
+                    option.value = inst._id;
+                    option.textContent = inst.nombre;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                log('Error al cargar instructores para actualizar: ' + error.message);
+            }
+        }
+
+        async function populateUpdateEstSelect() {
+            try {
+                const res = await fetch(`${API_BASE}/estudiantes`);
+                const data = await res.json();
+                const select = document.getElementById('updateEstSelect');
+                select.innerHTML = '<option value="">Selecciona un Estudiante</option>';
+                data.forEach(est => {
+                    const option = document.createElement('option');
+                    option.value = est._id;
+                    option.textContent = est.nombre;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                log('Error al cargar estudiantes para actualizar: ' + error.message);
+            }
+        }
+
+        async function populateUpdateInscSelect() {
+            try {
+                const res = await fetch(`${API_BASE}/inscripciones`);
+                const data = await res.json();
+                const select = document.getElementById('updateInscSelect');
+                select.innerHTML = '<option value="">Selecciona una Inscripción</option>';
+                data.forEach(insc => {
+                    const option = document.createElement('option');
+                    option.value = insc._id;
+                    option.textContent = `${insc.cursoId?.titulo || 'Curso'} - ${insc.estudianteId?.nombre || 'Estudiante'}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                log('Error al cargar inscripciones para actualizar: ' + error.message);
+            }
+        }
+
+        function loadCursoForUpdate() {
+            const id = document.getElementById('updateCursoSelect').value;
+            if (!id) return;
+            // Fetch the curso data
+            fetch(`${API_BASE}/cursos/${id}`)
+                .then(res => res.json())
+                .then(curso => {
+                    document.getElementById('updateId').value = curso._id;
+                    document.getElementById('updateTitulo').value = curso.titulo;
+                    document.getElementById('updateDescripcion').value = curso.descripcion;
+                    document.getElementById('updateCategoria').value = curso.categoria;
+                    document.getElementById('updateNivel').value = curso.nivel;
+                    document.getElementById('updateHoras').value = curso.horas;
+                    document.getElementById('updatePrecio').value = curso.precio;
+                    document.getElementById('updateFechaInicio').value = curso.fechaInicio.split('T')[0];
+                    document.getElementById('updateFechaFin').value = curso.fechaFin.split('T')[0];
+                    document.getElementById('updateEstado').value = curso.estado;
+                })
+                .catch(error => log('Error al cargar curso: ' + error.message));
+        }
+
+        function loadInstForUpdate() {
+            const id = document.getElementById('updateInstSelect').value;
+            if (!id) return;
+            fetch(`${API_BASE}/instructores/${id}`)
+                .then(res => res.json())
+                .then(inst => {
+                    document.getElementById('updateInstId').value = inst._id;
+                    document.getElementById('updateInstNombre').value = inst.nombre;
+                    document.getElementById('updateInstEmail').value = inst.email;
+                    document.getElementById('updateInstEspecialidad').value = inst.especialidad;
+                })
+                .catch(error => log('Error al cargar instructor: ' + error.message));
+        }
+
+        function loadEstForUpdate() {
+            const id = document.getElementById('updateEstSelect').value;
+            if (!id) return;
+            fetch(`${API_BASE}/estudiantes/${id}`)
+                .then(res => res.json())
+                .then(est => {
+                    document.getElementById('updateEstId').value = est._id;
+                    document.getElementById('updateEstNombre').value = est.nombre;
+                    document.getElementById('updateEstEmail').value = est.email;
+                    document.getElementById('updateEstFechaRegistro').value = est.fechaRegistro.split('T')[0];
+                })
+                .catch(error => log('Error al cargar estudiante: ' + error.message));
+        }
+
+        function loadInscForUpdate() {
+            const id = document.getElementById('updateInscSelect').value;
+            if (!id) return;
+            fetch(`${API_BASE}/inscripciones/${id}`)
+                .then(res => res.json())
+                .then(insc => {
+                    document.getElementById('updateInscId').value = insc._id;
+                    document.getElementById('updateInscCursoId').value = insc.cursoId;
+                    document.getElementById('updateInscEstudianteId').value = insc.estudianteId;
+                    document.getElementById('updateInscFechaRegistro').value = insc.fechaRegistro.split('T')[0];
+                    document.getElementById('updateInscEstado').value = insc.estado;
+                })
+                .catch(error => log('Error al cargar inscripción: ' + error.message));
+        }
+
+        async function listCursos() {
+            log('Enviando GET /api/cursos');
+            try {
+                const res = await fetch(`${API_BASE}/cursos`);
+                const data = await res.json();
+                let html = '<button onclick="toggleJson()">Mostrar/Ocultar JSON</button><div id="jsonContainer" style="display:none;"><pre>' + JSON.stringify(data, null, 2) + '</pre></div><ul>';
+                data.forEach(curso => {
+                    html += `<li>
+                        <strong>${curso.titulo}</strong> (${curso.categoria}, ${curso.nivel}) - ${curso.horas} horas, $${curso.precio}
+                        <button onclick="fillUpdate('${curso._id}', '${curso.titulo.replace(/'/g, "\\'")}', '${curso.descripcion.replace(/'/g, "\\'")}', '${curso.categoria}', '${curso.nivel}', ${curso.horas}, ${curso.precio}, '${curso.fechaInicio.split('T')[0]}', '${curso.fechaFin.split('T')[0]}', '${curso.estado}')">Actualizar</button>
+                        <button onclick="deleteCurso('${curso._id}')">Eliminar</button>
+                    </li>`;
+                });
+                html += '</ul>';
+                document.getElementById('cursosList').innerHTML = html;
+                log('Cursos listados exitosamente');
+            } catch (error) {
+                document.getElementById('cursosList').innerHTML = '<p>Error: ' + error.message + '</p>';
+                log('Error al listar cursos: ' + error.message);
+            }
+        }
+
+        async function listInstructores() {
+            log('Enviando GET /api/instructores');
+            try {
+                const res = await fetch(`${API_BASE}/instructores`);
+                const data = await res.json();
+                let html = '<ul>';
+                data.forEach(inst => {
+                    html += `<li><strong>${inst.nombre}</strong> - ${inst.email} (${inst.especialidad}) <button onclick="deleteInst('${inst._id}')">Eliminar</button></li>`;
+                });
+                html += '</ul>';
+                document.getElementById('instructoresList').innerHTML = html;
+                log('Instructores listados exitosamente');
+            } catch (error) {
+                document.getElementById('instructoresList').innerHTML = '<p>Error: ' + error.message + '</p>';
+                log('Error al listar instructores: ' + error.message);
+            }
+        }
+
+        async function listEstudiantes() {
+            log('Enviando GET /api/estudiantes');
+            try {
+                const res = await fetch(`${API_BASE}/estudiantes`);
+                const data = await res.json();
+                let html = '<ul>';
+                data.forEach(est => {
+                    html += `<li><strong>${est.nombre}</strong> - ${est.email} (${est.fechaRegistro.split('T')[0]}) <button onclick="deleteEst('${est._id}')">Eliminar</button></li>`;
+                });
+                html += '</ul>';
+                document.getElementById('estudiantesList').innerHTML = html;
+                log('Estudiantes listados exitosamente');
+            } catch (error) {
+                document.getElementById('estudiantesList').innerHTML = '<p>Error: ' + error.message + '</p>';
+                log('Error al listar estudiantes: ' + error.message);
+            }
+        }
+
+        async function listInscripciones() {
+            log('Enviando GET /api/inscripciones');
+            try {
+                const res = await fetch(`${API_BASE}/inscripciones`);
+                const data = await res.json();
+                let html = '<ul>';
+                data.forEach(insc => {
+                    html += `<li>Curso: ${insc.cursoId?.titulo || insc.cursoId} - Estudiante: ${insc.estudianteId?.nombre || insc.estudianteId} (${insc.estado}) <button onclick="deleteInsc('${insc._id}')">Eliminar</button></li>`;
+                });
+                html += '</ul>';
+                document.getElementById('inscripcionesList').innerHTML = html;
+                log('Inscripciones listadas exitosamente');
+            } catch (error) {
+                document.getElementById('inscripcionesList').innerHTML = '<p>Error: ' + error.message + '</p>';
+                log('Error al listar inscripciones: ' + error.message);
+            }
+        }
+
+        function toggleJson() {
+            const container = document.getElementById('jsonContainer');
+            container.style.display = container.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function fillUpdate(id, titulo, descripcion, categoria, nivel, horas, precio, fechaInicio, fechaFin, estado) {
+            document.getElementById('updateId').value = id;
+            document.getElementById('updateTitulo').value = titulo;
+            document.getElementById('updateDescripcion').value = descripcion;
+            document.getElementById('updateCategoria').value = categoria;
+            document.getElementById('updateNivel').value = nivel;
+            document.getElementById('updateHoras').value = horas;
+            document.getElementById('updatePrecio').value = precio;
+            document.getElementById('updateFechaInicio').value = fechaInicio;
+            document.getElementById('updateFechaFin').value = fechaFin;
+            document.getElementById('updateEstado').value = estado;
+            showSection('update');
+            log('Formulario de actualización llenado para: ' + titulo);
+        }
+
+        function fillInscUpdate(id, cursoId, estudianteId, fechaRegistro, estado) {
+            document.getElementById('updateInscId').value = id;
+            document.getElementById('updateInscCursoId').value = cursoId;
+            document.getElementById('updateInscEstudianteId').value = estudianteId;
+            document.getElementById('updateInscFechaRegistro').value = fechaRegistro;
+            document.getElementById('updateInscEstado').value = estado;
+            showSectionInsc('update');
+            log('Formulario de actualización de inscripción llenado para: ' + id);
+        }
+
+        async function deleteCurso(id) {
+            if (confirm('¿Estás seguro de eliminar este curso?')) {
+                log(`Enviando DELETE /api/cursos/${id}`);
+                try {
+                    const res = await fetch(`${API_BASE}/cursos/${id}`, {
+                        method: 'DELETE'
+                    });
+                    const data = await res.json();
+                    alert('Curso eliminado: ' + JSON.stringify(data));
+                    log(`Curso eliminado exitosamente: ${JSON.stringify(data)}`);
+                    listCursos();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                    log(`Error en DELETE /api/cursos/${id}: ${error.message}`);
+                }
+            }
+        }
+
+        async function deleteInst(id) {
+            if (confirm('¿Estás seguro de eliminar este instructor?')) {
+                log(`Enviando DELETE /api/instructores/${id}`);
+                try {
+                    const res = await fetch(`${API_BASE}/instructores/${id}`, {
+                        method: 'DELETE'
+                    });
+                    const data = await res.json();
+                    alert('Instructor eliminado: ' + JSON.stringify(data));
+                    log(`Instructor eliminado exitosamente: ${JSON.stringify(data)}`);
+                    listInstructores();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                    log(`Error en DELETE /api/instructores/${id}: ${error.message}`);
+                }
+            }
+        }
+
+        async function deleteEst(id) {
+            if (confirm('¿Estás seguro de eliminar este estudiante?')) {
+                log(`Enviando DELETE /api/estudiantes/${id}`);
+                try {
+                    const res = await fetch(`${API_BASE}/estudiantes/${id}`, {
+                        method: 'DELETE'
+                    });
+                    const data = await res.json();
+                    alert('Estudiante eliminado: ' + JSON.stringify(data));
+                    log(`Estudiante eliminado exitosamente: ${JSON.stringify(data)}`);
+                    listEstudiantes();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                    log(`Error en DELETE /api/estudiantes/${id}: ${error.message}`);
+                }
+            }
+        }
+
+        async function deleteInsc(id) {
+            if (confirm('¿Estás seguro de eliminar esta inscripción?')) {
+                log(`Enviando DELETE /api/inscripciones/${id}`);
+                try {
+                    const res = await fetch(`${API_BASE}/inscripciones/${id}`, {
+                        method: 'DELETE'
+                    });
+                    const data = await res.json();
+                    alert('Inscripción eliminada: ' + JSON.stringify(data));
+                    log(`Inscripción eliminada exitosamente: ${JSON.stringify(data)}`);
+                    listInscripciones();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                    log(`Error en DELETE /api/inscripciones/${id}: ${error.message}`);
+                }
+            }
+        }
+
+        document.getElementById('createCursoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const curso = {
+                titulo: document.getElementById('titulo').value,
+                descripcion: document.getElementById('descripcion').value,
+                categoria: document.getElementById('categoria').value,
+                nivel: document.getElementById('nivel').value,
+                horas: parseInt(document.getElementById('horas').value),
+                precio: parseFloat(document.getElementById('precio').value),
+                fechaInicio: document.getElementById('fechaInicio').value,
+                fechaFin: document.getElementById('fechaFin').value,
+                estado: document.getElementById('estado').value
+            };
+            log(`Enviando POST /api/cursos con datos: ${JSON.stringify(curso)}`);
+            try {
+                const res = await fetch(`${API_BASE}/cursos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(curso)
+                });
+                const data = await res.json();
+                alert('Curso creado: ' + JSON.stringify(data));
+                log(`Curso creado exitosamente: ${JSON.stringify(data)}`);
+                listCursos();
+            } catch (error) {
+                alert('Error: ' + error.message);
+                log(`Error en POST /api/cursos: ${error.message}`);
+            }
+        });
+
+        document.getElementById('createInstructorForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const instructor = {
+                nombre: document.getElementById('instNombre').value,
+                email: document.getElementById('instEmail').value,
+                especialidad: document.getElementById('instEspecialidad').value
+            };
+            try {
+                const res = await fetch(`${API_BASE}/instructores`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(instructor)
+                });
+                const data = await res.json();
+                alert('Instructor creado: ' + JSON.stringify(data));
+                log('Instructor creado: ' + instructor.nombre);
+                listInstructores();
+            } catch (error) {
+                alert('Error: ' + error.message);
+                log('Error al crear instructor: ' + error.message);
+            }
+        });
+
+        document.getElementById('createEstudianteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const estudiante = {
+                nombre: document.getElementById('estNombre').value,
+                email: document.getElementById('estEmail').value,
+                fechaRegistro: document.getElementById('estFechaRegistro').value
+            };
+            try {
+                const res = await fetch(`${API_BASE}/estudiantes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(estudiante)
+                });
+                const data = await res.json();
+                alert('Estudiante creado: ' + JSON.stringify(data));
+                log('Estudiante creado: ' + estudiante.nombre);
+                listEstudiantes();
+            } catch (error) {
+                alert('Error: ' + error.message);
+                log('Error al crear estudiante: ' + error.message);
+            }
+        });
+
+        document.getElementById('updateInstructorForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('updateInstId').value;
+            const inst = {
+                nombre: document.getElementById('updateInstNombre').value,
+                email: document.getElementById('updateInstEmail').value,
+                especialidad: document.getElementById('updateInstEspecialidad').value
+            };
+            log(`Enviando PUT /api/instructores/${id} con datos: ${JSON.stringify(inst)}`);
+            try {
+                const res = await fetch(`${API_BASE}/intructores/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(inst)
+                });
+                const data = await res.json();
+                alert('Instructor actualizado: ' + JSON.stringify(data));
+                log(`Instructor actualizado exitosamente: ${JSON.stringify(data)}`);
+                listInstructores();
+            } catch (error) {
+                alert('Error: ' + error.message);
+                log(`Error en PUT /api/instructores/${id}: ${error.message}`);
+            }
+        });
+
+        document.getElementById('updateEstudianteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('updateEstId').value;
+            const est = {
+                nombre: document.getElementById('updateEstNombre').value,
+                email: document.getElementById('updateEstEmail').value,
+                fechaRegistro: document.getElementById('updateEstFechaRegistro').value
+            };
+            log(`Enviando PUT /api/estudiantes/${id} con datos: ${JSON.stringify(est)}`);
+            try {
+                const res = await fetch(`${API_BASE}/estudiantes/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(est)
+                });
+                const data = await res.json();
+                alert('Estudiante actualizado: ' + JSON.stringify(data));
+                log(`Estudiante actualizado exitosamente: ${JSON.stringify(data)}`);
+                listEstudiantes();
+            } catch (error) {
+                alert('Error: ' + error.message);
+                log(`Error en PUT /api/estudiantes/${id}: ${error.message}`);
+            }
+        });
+
+        document.getElementById('updateInscripcionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('updateInscId').value;
+            const insc = {
+                cursoId: document.getElementById('updateInscCursoId').value,
+                estudianteId: document.getElementById('updateInscEstudianteId').value,
+                fechaRegistro: document.getElementById('updateInscFechaRegistro').value,
+                estado: document.getElementById('updateInscEstado').value
+            };
+            log(`Enviando PUT /api/inscripciones/${id} con datos: ${JSON.stringify(insc)}`);
+            try {
+                const res = await fetch(`${API_BASE}/inscripciones/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(insc)
+                });
+                const data = await res.json();
+                alert('Inscripción actualizada: ' + JSON.stringify(data));
+                log(`Inscripción actualizada exitosamente: ${JSON.stringify(data)}`);
+                listInscripciones();
+            } catch (error) {
+                alert('Error: ' + error.message);
+                log(`Error en PUT /api/inscripciones/${id}: ${error.message}`);
+            }
+        });
+
+        document.getElementById('deleteInscripcionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('deleteInscId').value;
+            log(`Enviando DELETE /api/inscripciones/${id}`);
+            try {
+                const res = await fetch(`${API_BASE}/inscripciones/${id}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                alert('Inscripción eliminada: ' + JSON.stringify(data));
+                log(`Inscripción eliminada exitosamente: ${JSON.stringify(data)}`);
+                listInscripciones();
+            } catch (error) {
+                alert('Error: ' + error.message);
+                log(`Error en DELETE /api/inscripciones/${id}: ${error.message}`);
+            }
+        });
+
+        // Cargar cursos para el selector en la sección de actualización
+        async function loadCursosForUpdate() {
+            try {
+                const res = await fetch(`${API_BASE}/cursos`);
+                const data = await res.json();
+                const select = document.getElementById('updateCursoSelect');
+                select.innerHTML = '<option value="">Selecciona un Curso</option>';
+                data.forEach(curso => {
+                    select.innerHTML += `<option value="${curso._id}">${curso.titulo}</option>`;
+                });
+                log('Cursos cargados para actualización');
+            } catch (error) {
+                log('Error al cargar cursos para actualización: ' + error.message);
+            }
+        }
+
+        // Cargar datos del curso seleccionado en el formulario de actualización
+        async function loadCursoForUpdate() {
+            const id = document.getElementById('updateCursoSelect').value;
+            if (!id) return;
+            log(`Cargando datos del curso para actualización: ${id}`);
+            try {
+                const res = await fetch(`${API_BASE}/cursos/${id}`);
+                const curso = await res.json();
+                document.getElementById('updateId').value = curso._id;
+                document.getElementById('updateTitulo').value = curso.titulo;
+                document.getElementById('updateDescripcion').value = curso.descripcion;
+                document.getElementById('updateCategoria').value = curso.categoria;
+                document.getElementById('updateNivel').value = curso.nivel;
+                document.getElementById('updateHoras').value = curso.horas;
+                document.getElementById('updatePrecio').value = curso.precio;
+                document.getElementById('updateFechaInicio').value = curso.fechaInicio.split('T')[0];
+                document.getElementById('updateFechaFin').value = curso.fechaFin.split('T')[0];
+                document.getElementById('updateEstado').value = curso.estado;
+                log('Datos del curso cargados en el formulario de actualización');
+            } catch (error) {
+                log('Error al cargar datos del curso: ' + error.message);
+            }
+        }
+
+        // Cargar instructores para el selector en la sección de actualización
+        async function loadInstructoresForUpdate() {
+            try {
+                const res = await fetch(`${API_BASE}/instructores`);
+                const data = await res.json();
+                const select = document.getElementById('updateInstSelect');
+                select.innerHTML = '<option value="">Selecciona un Instructor</option>';
+                data.forEach(inst => {
+                    select.innerHTML += `<option value="${inst._id}">${inst.nombre}</option>`;
+                });
+                log('Instructores cargados para actualización');
+            } catch (error) {
+                log('Error al cargar instructores para actualización: ' + error.message);
+            }
+        }
+
+        // Cargar estudiantes para el selector en la sección de actualización
+        async function loadEstudiantesForUpdate() {
+            try {
+                const res = await fetch(`${API_BASE}/estudiantes`);
+                const data = await res.json();
+                const select = document.getElementById('updateEstSelect');
+                select.innerHTML = '<option value="">Selecciona un Estudiante</option>';
+                data.forEach(est => {
+                    select.innerHTML += `<option value="${est._id}">${est.nombre}</option>`;
+                });
+                log('Estudiantes cargados para actualización');
+            } catch (error) {
+                log('Error al cargar estudiantes para actualización: ' + error.message);
+            }
+        }
+
+        // Inicializar
+        loadCursosForUpdate();
+        loadInstructoresForUpdate();
+        loadEstudiantesForUpdate();
+        showSection('insert');
+    </script>
+</body>
+</html>
