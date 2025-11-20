@@ -1,18 +1,25 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import Counter from './Counter';
 
 export interface ICurso extends Document {
+  id: number;
   titulo: string;
   descripcion: string;
-  categoria: 'programacion' | 'diseño' | 'marketing' | 'finanzas' | 'otro';
+  categoria: 'programacion' | 'diseï¿½o' | 'marketing' | 'finanzas' | 'otro';
   nivel: 'beginner' | 'intermediate' | 'advanced';
   horas: number;
   precio: number;
   fechaInicio: Date;
   fechaFin: Date;
   estado: 'draft' | 'published' | 'archived';
+  instructorId: number;
 }
 
 const cursoSchema: Schema = new Schema({
+  id: {
+    type: Number,
+    unique: true
+  },
   titulo: {
     type: String,
     required: true,
@@ -27,7 +34,7 @@ const cursoSchema: Schema = new Schema({
   },
   categoria: {
     type: String,
-    enum: ['programacion', 'diseño', 'marketing', 'finanzas', 'otro'],
+    enum: ['programacion', 'diseï¿½o', 'marketing', 'finanzas', 'otro'],
     required: true
   },
   nivel: {
@@ -57,18 +64,34 @@ const cursoSchema: Schema = new Schema({
     type: String,
     enum: ['draft', 'published', 'archived'],
     required: true
+  },
+  instructorId: {
+    type: Number,
+    required: true,
+    ref: 'Instructor'
   }
 }, {
   timestamps: true
 });
 
-// Validation for fechaFin >= fechaInicio
-cursoSchema.pre<ICurso>('save', function(next) {
+// Validation for fechaFin >= fechaInicio and set auto-increment id
+cursoSchema.pre<ICurso>('save', async function(next) {
   if (this.fechaFin < this.fechaInicio) {
-    next(new Error('fechaFin must be greater than or equal to fechaInicio'));
-  } else {
-    next();
+    return next(new Error('fechaFin must be greater than or equal to fechaInicio'));
   }
+  if (this.isNew) {
+    try {
+      const counter = await Counter.findByIdAndUpdate(
+        'cursoId',
+        { $inc: { seq: 1 } },
+        { new: true, upsert: true }
+      );
+      this.id = counter.seq;
+    } catch (error) {
+      return next(error instanceof Error ? error : new Error(String(error)));
+    }
+  }
+  next();
 });
 
 export default mongoose.model<ICurso>('Curso', cursoSchema);

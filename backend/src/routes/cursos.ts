@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import Curso from '../models/Curso';
+import Instructor from '../models/Instructor';
 
 const router = express.Router();
 
@@ -29,6 +30,12 @@ router.get('/:id', async (req: Request, res: Response) => {
 // POST /cursos - Create a new curso
 router.post('/', async (req: Request, res: Response) => {
   try {
+    // Validar que el instructor existe
+    const instructor = await Instructor.findOne({ id: req.body.instructorId });
+    if (!instructor) {
+      return res.status(400).json({ message: 'Instructor not found' });
+    }
+
     const curso = new Curso(req.body);
     await curso.save();
     res.status(201).json(curso);

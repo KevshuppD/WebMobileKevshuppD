@@ -32,44 +32,10 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const Counter_1 = __importDefault(require("./Counter"));
-const instructorSchema = new mongoose_1.Schema({
-    id: {
-        type: Number,
-        unique: true
-    },
-    nombre: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    especialidad: {
-        type: String,
-        required: true
-    }
-}, {
-    timestamps: true
+const counterSchema = new mongoose_1.Schema({
+    _id: { type: String, required: true },
+    seq: { type: Number, default: 0 }
 });
-// Set auto-increment id
-instructorSchema.pre('save', async function (next) {
-    if (this.isNew) {
-        try {
-            const counter = await Counter_1.default.findByIdAndUpdate('instructorId', { $inc: { seq: 1 } }, { new: true, upsert: true });
-            this.id = counter.seq;
-        }
-        catch (error) {
-            return next(error instanceof Error ? error : new Error(String(error)));
-        }
-    }
-    next();
-});
-exports.default = mongoose_1.default.model('Instructor', instructorSchema);
+exports.default = mongoose_1.default.model('Counter', counterSchema);

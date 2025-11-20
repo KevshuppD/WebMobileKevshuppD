@@ -1,21 +1,19 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IInscripcion extends Document {
-  cursoId: mongoose.Types.ObjectId;
-  estudianteId: mongoose.Types.ObjectId;
+  cursoId: number;
+  estudianteId: number;
   fechaRegistro: Date;
   estado: 'activa' | 'pendiente' | 'cancelada';
 }
 
 const inscripcionSchema: Schema = new Schema({
   cursoId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Curso',
+    type: Number,
     required: true
   },
   estudianteId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Estudiante',
+    type: Number,
     required: true
   },
   fechaRegistro: {

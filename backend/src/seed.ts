@@ -26,8 +26,8 @@ const seedDatabase = async () => {
     },
     {
       titulo: "UX Writing Intermedio",
-      descripcion: "Diseña microcopys efectivos y flujos de contenido centrados en el usuario.",
-      categoria: "diseño",
+      descripcion: "Diseï¿½a microcopys efectivos y flujos de contenido centrados en el usuario.",
+      categoria: "diseï¿½o",
       nivel: "intermediate",
       horas: 8,
       precio: 45.5,
@@ -37,7 +37,7 @@ const seedDatabase = async () => {
     },
     {
       titulo: "Finanzas Personales Avanzadas",
-      descripcion: "Optimiza presupuesto, inversión y ahorro con casos prácticos y simulaciones reales.",
+      descripcion: "Optimiza presupuesto, inversiï¿½n y ahorro con casos prï¿½cticos y simulaciones reales.",
       categoria: "finanzas",
       nivel: "advanced",
       horas: 16,
@@ -48,16 +48,24 @@ const seedDatabase = async () => {
     }
   ];
 
-  await Curso.insertMany(cursos);
+  const insertedCursos = [];
+  for (const curso of cursos) {
+    const c = await Curso.create(curso);
+    insertedCursos.push(c);
+  }
   console.log('Cursos seeded');
 
   // Seed Instructores
   const instructores = [
-    { nombre: "Laura Méndez", email: "laura@academia.com", especialidad: "JavaScript" },
+    { nombre: "Laura Mï¿½ndez", email: "laura@academia.com", especialidad: "JavaScript" },
     { nombre: "Carlos Ruiz", email: "carlos@academia.com", especialidad: "UX" }
   ];
 
-  await Instructor.insertMany(instructores);
+  const insertedInstructores = [];
+  for (const inst of instructores) {
+    const i = await Instructor.create(inst);
+    insertedInstructores.push(i);
+  }
   console.log('Instructores seeded');
 
   // Seed Estudiantes
@@ -66,17 +74,21 @@ const seedDatabase = async () => {
     { nombre: "Miguel Vega", email: "miguel.vega@mail.com", fechaRegistro: new Date("2025-11-11T00:00:00Z") }
   ];
 
-  const insertedEstudiantes = await Estudiante.insertMany(estudiantes);
+  const insertedEstudiantes = [];
+  for (const est of estudiantes) {
+    const e = await Estudiante.create(est);
+    insertedEstudiantes.push(e);
+  }
   console.log('Estudiantes seeded');
 
   // Seed Inscripciones
   const ana = insertedEstudiantes.find(e => e.email === "ana.torres@mail.com");
-  const tsCurso = await Curso.findOne({ titulo: "TypeScript Esencial" });
+  const tsCurso = insertedCursos.find(c => c.titulo === "TypeScript Esencial");
 
   if (ana && tsCurso) {
     await Inscripcion.create({
-      cursoId: tsCurso._id,
-      estudianteId: ana._id,
+      cursoId: tsCurso.id,
+      estudianteId: ana.id,
       fechaRegistro: new Date("2025-11-12T00:00:00Z"),
       estado: "activa"
     });

@@ -1,0 +1,27 @@
+{
+  "name": "biblioteca-cursos-webmobile",
+  "version": "1.0.0",
+  "description": "Sistema de gestión de biblioteca de cursos con backend Node.js/Express/TypeScript y frontend HTML/CSS/JS",
+  "main": "start.js",
+  "bin": {
+    "biblioteca-cursos": "./start.js"
+  },
+  "scripts": {
+    "start": "node start.js",
+    "start:bat": "iniciar-servidores.bat",
+    "start:ps1": "powershell -ExecutionPolicy Bypass -File iniciar-servidores.ps1",
+    "start:legacy": "npm run start:backend & npm run start:frontend",
+    "start:backend": "cd backend && npm run build && npm start",
+    "start:frontend": "cd frontend && npm start",
+    "build": "cd backend && npm run build",
+    "dev": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "clean": "cd backend && npm run clean"
+  },
+  "keywords": ["cursos", "biblioteca", "mongodb", "express", "typescript"],
+  "author": "KevshuppD",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

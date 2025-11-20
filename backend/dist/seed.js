@@ -49,29 +49,41 @@ const seedDatabase = async () => {
             estado: "published"
         }
     ];
-    await Curso_1.default.insertMany(cursos);
+    const insertedCursos = [];
+    for (const curso of cursos) {
+        const c = await Curso_1.default.create(curso);
+        insertedCursos.push(c);
+    }
     console.log('Cursos seeded');
     // Seed Instructores
     const instructores = [
         { nombre: "Laura M�ndez", email: "laura@academia.com", especialidad: "JavaScript" },
         { nombre: "Carlos Ruiz", email: "carlos@academia.com", especialidad: "UX" }
     ];
-    await Instructor_1.default.insertMany(instructores);
+    const insertedInstructores = [];
+    for (const inst of instructores) {
+        const i = await Instructor_1.default.create(inst);
+        insertedInstructores.push(i);
+    }
     console.log('Instructores seeded');
     // Seed Estudiantes
     const estudiantes = [
         { nombre: "Ana Torres", email: "ana.torres@mail.com", fechaRegistro: new Date("2025-11-10T00:00:00Z") },
         { nombre: "Miguel Vega", email: "miguel.vega@mail.com", fechaRegistro: new Date("2025-11-11T00:00:00Z") }
     ];
-    const insertedEstudiantes = await Estudiante_1.default.insertMany(estudiantes);
+    const insertedEstudiantes = [];
+    for (const est of estudiantes) {
+        const e = await Estudiante_1.default.create(est);
+        insertedEstudiantes.push(e);
+    }
     console.log('Estudiantes seeded');
     // Seed Inscripciones
     const ana = insertedEstudiantes.find(e => e.email === "ana.torres@mail.com");
-    const tsCurso = await Curso_1.default.findOne({ titulo: "TypeScript Esencial" });
+    const tsCurso = insertedCursos.find(c => c.titulo === "TypeScript Esencial");
     if (ana && tsCurso) {
         await Inscripcion_1.default.create({
-            cursoId: tsCurso._id,
-            estudianteId: ana._id,
+            cursoId: tsCurso.id,
+            estudianteId: ana.id,
             fechaRegistro: new Date("2025-11-12T00:00:00Z"),
             estado: "activa"
         });

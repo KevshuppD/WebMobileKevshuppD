@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const Curso_1 = __importDefault(require("../models/Curso"));
+const Instructor_1 = __importDefault(require("../models/Instructor"));
 const router = express_1.default.Router();
 // GET /cursos - List all cursos
 router.get('/', async (req, res) => {
@@ -32,6 +33,11 @@ router.get('/:id', async (req, res) => {
 // POST /cursos - Create a new curso
 router.post('/', async (req, res) => {
     try {
+        // Validar que el instructor existe
+        const instructor = await Instructor_1.default.findOne({ id: req.body.instructorId });
+        if (!instructor) {
+            return res.status(400).json({ message: 'Instructor not found' });
+        }
         const curso = new Curso_1.default(req.body);
         await curso.save();
         res.status(201).json(curso);

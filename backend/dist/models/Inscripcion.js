@@ -36,13 +36,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const inscripcionSchema = new mongoose_1.Schema({
     cursoId: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'Curso',
+        type: Number,
         required: true
     },
     estudianteId: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'Estudiante',
+        type: Number,
         required: true
     },
     fechaRegistro: {

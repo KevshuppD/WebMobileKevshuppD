@@ -28,26 +28,79 @@ La aplicación está dividida en dos servidores:
 
 ## Instalación y Ejecución
 
-### 1. Clonar el repositorio
+### 🚀 Inicio Rápido (Recomendado)
+
+#### Opción 1: Ejecutable Node.js (Multiplataforma)
+```bash
+# Instalar dependencias de todos los módulos
+npm run install:all
+
+# Iniciar todos los servidores automáticamente
+npm start
+```
+
+#### Opción 2: Archivo Batch (Windows)
+```cmd
+# Hacer doble clic en el archivo o ejecutar desde línea de comandos
+iniciar-servidores.bat
+```
+
+#### Opción 3: PowerShell Script (Windows)
+```powershell
+# Ejecutar con PowerShell
+.\iniciar-servidores.ps1
+```
+
+### 🔧 Instalación Manual
+
+#### 1. Clonar el repositorio
 ```bash
 git clone https://github.com/KevshuppD/WebMobileKevshuppD.git
 cd WebMobileKevshuppD
 ```
 
-### 2. Configurar el Backend
-
+#### 2. Instalar dependencias
 ```bash
+# Dependencias del proyecto raíz
+npm install
+
+# Dependencias del backend
 cd backend
 npm install
+cd ..
+
+# Dependencias del frontend
+cd frontend
+npm install
+cd ..
 ```
 
-#### Configurar la base de datos
+#### 3. Configurar el Backend
+
 Edita el archivo `backend/.env` y establece la URI de MongoDB:
 ```
 MONGODB_URI=mongodb+srv://tu_usuario:tu_password@cluster.mongodb.net/tu_base_datos
 ```
 
-#### Compilar y ejecutar
+#### 4. Iniciar los servidores
+
+**Opción A: Iniciar todo automáticamente**
+```bash
+# Desde el directorio raíz
+npm start
+```
+
+**Opción B: Iniciar manualmente**
+```bash
+# Terminal 1: Backend
+cd backend
+npm run build
+npm start
+
+# Terminal 2: Frontend (en otra terminal)
+cd frontend
+npm start
+```
 ```bash
 npm run build
 npm start

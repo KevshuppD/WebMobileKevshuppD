@@ -12,5 +12,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Frontend server running on http://localhost:${PORT}`);
+  console.log(`Servidor frontend ejecutándose en http://localhost:${PORT}`);
 });

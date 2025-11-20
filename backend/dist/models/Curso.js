@@ -32,9 +32,17 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+const Counter_1 = __importDefault(require("./Counter"));
 const cursoSchema = new mongoose_1.Schema({
+    id: {
+        type: Number,
+        unique: true
+    },
     titulo: {
         type: String,
         required: true,
@@ -79,17 +87,29 @@ const cursoSchema = new mongoose_1.Schema({
         type: String,
         enum: ['draft', 'published', 'archived'],
         required: true
+    },
+    instructorId: {
+        type: Number,
+        required: true,
+        ref: 'Instructor'
     }
 }, {
     timestamps: true
 });
-// Validation for fechaFin >= fechaInicio
-cursoSchema.pre('save', function (next) {
+// Validation for fechaFin >= fechaInicio and set auto-increment id
+cursoSchema.pre('save', async function (next) {
     if (this.fechaFin < this.fechaInicio) {
-        next(new Error('fechaFin must be greater than or equal to fechaInicio'));
+        return next(new Error('fechaFin must be greater than or equal to fechaInicio'));
     }
-    else {
-        next();
+    if (this.isNew) {
+        try {
+            const counter = await Counter_1.default.findByIdAndUpdate('cursoId', { $inc: { seq: 1 } }, { new: true, upsert: true });
+            this.id = counter.seq;
+        }
+        catch (error) {
+            return next(error instanceof Error ? error : new Error(String(error)));
+        }
     }
+    next();
 });
 exports.default = mongoose_1.default.model('Curso', cursoSchema);
