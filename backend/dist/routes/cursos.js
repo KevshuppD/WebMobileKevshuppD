@@ -4,9 +4,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const express_validator_1 = require("express-validator");
 const Curso_1 = __importDefault(require("../models/Curso"));
 const Instructor_1 = __importDefault(require("../models/Instructor"));
 const router = express_1.default.Router();
+// Validation middleware
+const validateCurso = [
+    (0, express_validator_1.body)('titulo').isLength({ min: 5 }).withMessage('Title must be at least 5 characters'),
+    (0, express_validator_1.body)('descripcion').isLength({ min: 20, max: 500 }).withMessage('Description must be between 20 and 500 characters'),
+    (0, express_validator_1.body)('categoria').isIn(['programacion', 'diseño', 'marketing', 'finanzas', 'otro']).withMessage('Invalid category'),
+    (0, express_validator_1.body)('nivel').isIn(['beginner', 'intermediate', 'advanced']).withMessage('Invalid level'),
+    (0, express_validator_1.body)('horas').isInt({ min: 1 }).withMessage('Hours must be a positive integer'),
+    (0, express_validator_1.body)('precio').isFloat({ min: 0 }).withMessage('Price must be a non-negative number'),
+    (0, express_validator_1.body)('fechaInicio').isISO8601().withMessage('Invalid start date'),
+    (0, express_validator_1.body)('fechaFin').isISO8601().withMessage('Invalid end date'),
+    (0, express_validator_1.body)('estado').isIn(['draft', 'published', 'archived']).withMessage('Invalid status'),
+    (0, express_validator_1.body)('instructorId').isInt().withMessage('Instructor ID must be an integer'),
+];
 // GET /cursos - List all cursos
 router.get('/', async (req, res) => {
     try {
@@ -31,7 +45,11 @@ router.get('/:id', async (req, res) => {
     }
 });
 // POST /cursos - Create a new curso
-router.post('/', async (req, res) => {
+router.post('/', validateCurso, async (req, res) => {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     try {
         // Validar que el instructor existe
         const instructor = await Instructor_1.default.findOne({ id: req.body.instructorId });
@@ -52,7 +70,11 @@ router.post('/', async (req, res) => {
     }
 });
 // PUT /cursos/:id - Update a curso
-router.put('/:id', async (req, res) => {
+router.put('/:id', validateCurso, async (req, res) => {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     try {
         const curso = await Curso_1.default.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!curso) {

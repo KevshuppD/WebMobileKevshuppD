@@ -1,8 +1,23 @@
 import express, { Request, Response } from 'express';
+import { body, validationResult } from 'express-validator';
 import Curso from '../models/Curso';
 import Instructor from '../models/Instructor';
 
 const router = express.Router();
+
+// Validation middleware
+const validateCurso = [
+  body('titulo').isLength({ min: 5 }).withMessage('Title must be at least 5 characters'),
+  body('descripcion').isLength({ min: 20, max: 500 }).withMessage('Description must be between 20 and 500 characters'),
+  body('categoria').isIn(['programacion', 'diseño', 'marketing', 'finanzas', 'otro']).withMessage('Invalid category'),
+  body('nivel').isIn(['beginner', 'intermediate', 'advanced']).withMessage('Invalid level'),
+  body('horas').isInt({ min: 1 }).withMessage('Hours must be a positive integer'),
+  body('precio').isFloat({ min: 0 }).withMessage('Price must be a non-negative number'),
+  body('fechaInicio').isISO8601().withMessage('Invalid start date'),
+  body('fechaFin').isISO8601().withMessage('Invalid end date'),
+  body('estado').isIn(['draft', 'published', 'archived']).withMessage('Invalid status'),
+  body('instructorId').isInt().withMessage('Instructor ID must be an integer'),
+];
 
 // GET /cursos - List all cursos
 router.get('/', async (req: Request, res: Response) => {
@@ -28,7 +43,12 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 // POST /cursos - Create a new curso
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', validateCurso, async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   try {
     // Validar que el instructor existe
     const instructor = await Instructor.findOne({ id: req.body.instructorId });
@@ -49,7 +69,12 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 // PUT /cursos/:id - Update a curso
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', validateCurso, async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   try {
     const curso = await Curso.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!curso) {

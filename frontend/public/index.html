@@ -4,227 +4,370 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biblioteca de Cursos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #050609;
+            --panel: #0f1722;
+            --panel-alt: #141d2f;
+            --accent: #66f6ff;
+            --accent-strong: #ff4ef8;
+            --text: #f5f7ff;
+            --muted: #9aa6c0;
+            --danger: #ff6b6b;
+            --success: #68ffa5;
+            --warning: #ffd369;
+        }
+        * {
+            box-sizing: border-box;
+        }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            color: #333;
+            padding: 40px 16px;
+            font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at top, #111b2e 0%, #050609 45%, #030306 100%);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(90deg, rgba(102, 246, 255, 0.06) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(102, 246, 255, 0.06) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255, 78, 248, 0.12), transparent 60%);
+            pointer-events: none;
         }
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 30px;
-            margin-bottom: 20px;
+            width: min(1200px, 100%);
+            background: var(--panel);
+            border: 4px solid var(--accent);
+            border-radius: 18px;
+            padding: 48px;
+            position: relative;
+            box-shadow:
+                0 0 25px rgba(102, 246, 255, 0.4),
+                0 30px 60px rgba(1, 2, 10, 0.9);
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            inset: 12px;
+            border: 2px dashed rgba(102, 246, 255, 0.3);
+            pointer-events: none;
         }
         h1 {
+            font-family: 'Press Start 2P', cursive;
             text-align: center;
-            color: #4a5568;
-            margin-bottom: 10px;
-            font-size: 2.5em;
+            font-size: clamp(1.6rem, 3vw, 2.6rem);
+            letter-spacing: 0.08em;
+            margin: 0 0 1rem;
+            color: var(--accent);
+            text-shadow: 0 0 16px rgba(102, 246, 255, 0.9);
         }
         .subtitle {
             text-align: center;
-            color: #718096;
-            margin-bottom: 30px;
-            font-size: 1.1em;
+            color: var(--muted);
+            margin-bottom: 2rem;
+            letter-spacing: 0.2em;
+            font-size: 0.85rem;
         }
         h2 {
-            color: #2d3748;
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 10px;
-            margin-top: 40px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            color: var(--warning);
+            letter-spacing: 0.1em;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid rgba(255, 211, 105, 0.4);
         }
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            margin: 5px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        h3 {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin: 1.5rem 0 1rem;
+            color: var(--accent-strong);
         }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-        button:active {
-            transform: translateY(0);
-        }
-        .test-btn {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%) !important;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3) !important;
-        }
-        .test-btn:hover {
-            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4) !important;
-        }
-        .section {
-            display: none;
-            margin-top: 20px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border-left: 5px solid #667eea;
-        }
-        .section.active {
-            display: block;
-        }
-        form {
-            margin-bottom: 20px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        input, select {
-            margin: 10px 5px;
-            padding: 12px;
-            width: calc(100% - 24px);
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-        input:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        .form-row {
-            display: flex;
-            gap: 10px;
-        }
-        .form-row > * {
-            flex: 1;
-        }
-        .submit-btn {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            width: 100%;
-            margin-top: 10px;
-        }
-        .submit-btn:hover {
-            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            background: white;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border-left: 4px solid #667eea;
-            transition: transform 0.2s ease;
-        }
-        li:hover {
-            transform: translateX(5px);
-        }
-        .item-id {
-            font-weight: bold;
-            color: #667eea;
-        }
-        .item-title {
-            font-size: 1.2em;
-            color: #2d3748;
-        }
-        .item-details {
-            color: #718096;
-            margin-top: 5px;
-        }
-        .log-container {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-        }
-        .log-toggle {
-            background: #4a5568;
-            margin-bottom: 10px;
-        }
-        .json-container {
-            display: none;
-            background: #1a202c;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            white-space: pre-wrap;
-            font-size: 12px;
+        p, label, li, span, input, select, textarea, option, button {
+            font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
         }
         .note {
-            background: #fef5e7;
-            border: 1px solid #f6ad55;
-            color: #c05621;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            background: var(--panel-alt);
+            border: 2px solid var(--warning);
+            padding: 1.25rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            color: var(--warning);
+            box-shadow: inset 0 0 20px rgba(255, 211, 105, 0.1);
+        }
+        .note ul {
+            margin: 0.75rem 0 0;
+            padding-left: 1.25rem;
+        }
+        .note li {
+            margin-bottom: 0.35rem;
         }
         .btn-group {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
         }
-        .action-btn {
-            background: #e53e3e;
-            padding: 8px 16px;
-            font-size: 14px;
+        button {
+            background: var(--panel-alt);
+            color: var(--text);
+            border: 3px solid var(--accent);
+            padding: 14px 18px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            position: relative;
+            box-shadow:
+                4px 4px 0 var(--accent),
+                12px 12px 30px rgba(0, 0, 0, 0.45);
         }
-        .action-btn:hover {
-            background: #c53030;
+        button:hover {
+            transform: translate(-2px, -2px);
+            box-shadow:
+                6px 6px 0 var(--accent),
+                16px 16px 40px rgba(0, 0, 0, 0.6);
         }
-        @media (max-width: 768px) {
+        button:active {
+            transform: translate(1px, 1px);
+            box-shadow: 2px 2px 0 var(--accent);
+        }
+        .test-btn {
+            border-color: var(--danger);
+            box-shadow: 4px 4px 0 var(--danger);
+            color: var(--danger);
+        }
+        .test-btn:hover {
+            box-shadow: 6px 6px 0 var(--danger);
+        }
+        .panel {
+            background: var(--panel-alt);
+            padding: 1.5rem;
+            border: 2px solid rgba(102, 246, 255, 0.3);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        .panel.panel-ghost {
+            background: rgba(15, 23, 34, 0.65);
+            border-style: dashed;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin: 1.5rem 0;
+        }
+        .stat-card {
+            background: rgba(4, 8, 16, 0.7);
+            border: 2px solid rgba(102, 246, 255, 0.4);
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.35);
+        }
+        .stat-card span {
+            display: block;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+        }
+        .stat-card strong {
+            font-size: 1.6rem;
+            color: var(--accent);
+            margin-top: 0.5rem;
+            display: block;
+        }
+        .pixel-table {
+            width: 100%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .pixel-table-header,
+        .pixel-table-row {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr;
+            gap: 12px;
+            padding: 0.85rem 1rem;
+        }
+        .pixel-table-header {
+            background: rgba(255, 255, 255, 0.05);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.7rem;
+            color: var(--muted);
+        }
+        .pixel-table-row {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .pixel-table-row:nth-child(odd) {
+            background: rgba(0, 0, 0, 0.15);
+        }
+        .pixel-table-row strong {
+            color: var(--accent);
+        }
+        form {
+            background: rgba(5, 6, 9, 0.3);
+            border: 2px solid rgba(102, 246, 255, 0.25);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.45);
+        }
+        input, select, textarea {
+            width: 100%;
+            margin: 10px 0 18px;
+            padding: 14px 16px;
+            border: 3px solid rgba(154, 166, 192, 0.4);
+            border-radius: 8px;
+            background: rgba(2, 5, 11, 0.6);
+            color: var(--text);
+            font-size: 1rem;
+        }
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(102, 246, 255, 0.35);
+        }
+        label {
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            font-size: 0.8rem;
+            margin-bottom: 0.35rem;
+        }
+        .log-container {
+            background: #03050b;
+            border: 2px solid #00ff9c;
+            color: #00ff9c;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.75rem;
+            padding: 1rem;
+            height: 260px;
+            overflow-y: auto;
+            border-radius: 12px;
+            box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.8);
+        }
+        .log-container p {
+            margin: 0.4rem 0;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        li {
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 6px solid var(--accent);
+            margin-bottom: 0.8rem;
+        }
+        .item-id {
+            font-weight: 600;
+            color: var(--accent);
+        }
+        .item-title {
+            font-size: 1.1rem;
+        }
+        .item-details {
+            color: var(--muted);
+        }
+        hr {
+            border: none;
+            border-top: 1px dashed rgba(255, 255, 255, 0.2);
+            margin: 2rem 0;
+        }
+        @media (max-width: 992px) {
+            .container {
+                padding: 32px;
+            }
+        }
+        @media (max-width: 640px) {
             body {
-                padding: 10px;
+                padding: 24px 10px;
             }
             .container {
-                padding: 20px;
+                padding: 24px;
             }
             h1 {
-                font-size: 2em;
+                font-size: 1.4rem;
             }
-            .form-row {
-                flex-direction: column;
-            }
-            .btn-group {
-                justify-content: center;
+            button {
+                width: 100%;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Biblioteca Digital de Cursos</h1>
-        <p class="subtitle">Entrega 2 de Web Mobile - Kevin Castro</p>
+        <header class="hero">
+            <h1>Biblioteca Digital de Cursos</h1>
+            <p class="subtitle">Entrega 2 de Web Mobile · Kevin Castro</p>
+        </header>
 
-        <div class="note">
-            <strong>Requisitos Cumplidos</strong><br>
-            ✅ CRUD completo para Cursos<br>
-            ✅ CRUD completo para Instructores<br>
-            ✅ CRUD completo para Estudiantes<br>
-            ✅ CRUD completo para Inscripciones<br>
-            ✅ Transacción en MongoDB para inscripciones<br>
-            ✅ IDs auto-incrementales
-        </div>
+        <section class="panel panel-ghost">
+            <div class="note">
+                <strong>Requisitos Cumplidos</strong>
+                <ul>
+                    <li>✅ CRUD completo para Cursos</li>
+                    <li>✅ CRUD completo para Instructores</li>
+                    <li>✅ CRUD completo para Estudiantes</li>
+                    <li>✅ CRUD completo para Inscripciones</li>
+                    <li>✅ Transacción MongoDB para inscripciones</li>
+                    <li>✅ IDs auto-incrementales</li>
+                </ul>
+            </div>
+        </section>
 
-    <h2>Log de Operaciones</h2>
-    <div id="log" class="log-container"></div>
+        <section class="panel">
+            <h2>Log de Operaciones</h2>
+            <p>Monitorea en tiempo real cada acción ejecutada sobre la API académica.</p>
+            <div id="log" class="log-container"></div>
+        </section>
 
+        <section class="panel">
+            <h2>Reporte Ejecutivo</h2>
+            <p>Resumen en tiempo real de inventario académico y ventas consolidadas.</p>
+            <div id="reportSummary" class="stats-grid"></div>
+            <div class="panel panel-ghost" id="reportSalesPanel">
+                <h3>Ventas por Curso</h3>
+                <div id="reportSales"></div>
+            </div>
+        </section>
+
+    <section class="panel">
     <h2>Cursos</h2>
+    <p>Administra el catálogo completo de cursos disponibles en la biblioteca digital.</p>
     <div class="btn-group">
         <button onclick="showSection('list')">Listar Cursos</button>
         <button onclick="showSection('insert')">Agregar Curso</button>
@@ -232,11 +375,11 @@
         <button onclick="showSection('delete')">Eliminar Curso</button>
     </div>
 
-    <div id="listDiv" style="display:none;">
+    <div id="listDiv" class="panel panel-ghost" style="display:none;">
         <div id="cursosList"></div>
     </div>
 
-    <div id="insertDiv" style="display:none;">
+    <div id="insertDiv" class="panel panel-ghost" style="display:none;">
         <h3>Crear Curso</h3>
         <form id="createCursoForm">
             <input type="text" id="titulo" placeholder="T�tulo" required minlength="5"><br>
@@ -271,7 +414,7 @@
         </form>
     </div>
 
-    <div id="updateDiv" style="display:none;">
+    <div id="updateDiv" class="panel panel-ghost" style="display:none;">
         <h3>Actualizar Curso</h3>
         <select id="updateCursoSelect" onchange="loadCursoForUpdate()">
             <option value="">Selecciona un Curso</option>
@@ -310,25 +453,30 @@
         </form>
     </div>
 
-    <div id="deleteDiv" style="display:none;">
+    <div id="deleteDiv" class="panel panel-ghost" style="display:none;">
         <h3>Eliminar Curso</h3>
         <form id="deleteCursoForm">
             <input type="text" id="deleteId" placeholder="ID del Curso" required><br>
             <button type="submit">Eliminar Curso</button>
         </form>
     </div>
+    </section>
 
+    <section class="panel">
     <h2>Instructores</h2>
-    <button onclick="showSectionInst('list')">Listar</button>
-    <button onclick="showSectionInst('insert')">Insertar</button>
-    <button onclick="showSectionInst('update')">Actualizar</button>
-    <button onclick="showSectionInst('delete')">Eliminar</button>
+    <p>Gestiona perfiles profesionales, especialidades y disponibilidad.</p>
+    <div class="btn-group">
+        <button onclick="showSectionInst('list')">Listar</button>
+        <button onclick="showSectionInst('insert')">Insertar</button>
+        <button onclick="showSectionInst('update')">Actualizar</button>
+        <button onclick="showSectionInst('delete')">Eliminar</button>
+    </div>
 
-    <div id="listInstDiv" style="display:none;">
+    <div id="listInstDiv" class="panel panel-ghost" style="display:none;">
         <div id="instructoresList"></div>
     </div>
 
-    <div id="insertInstDiv" style="display:block;">
+    <div id="insertInstDiv" class="panel panel-ghost" style="display:block;">
         <h3>Crear Instructor</h3>
         <form id="createInstructorForm">
             <input type="text" id="instNombre" placeholder="Nombre" required><br>
@@ -338,7 +486,7 @@
         </form>
     </div>
 
-    <div id="updateInstDiv" style="display:none;">
+    <div id="updateInstDiv" class="panel panel-ghost" style="display:none;">
         <h3>Actualizar Instructor</h3>
         <select id="updateInstSelect" onchange="loadInstForUpdate()">
             <option value="">Selecciona un Instructor</option>
@@ -352,25 +500,30 @@
         </form>
     </div>
 
-    <div id="deleteInstDiv" style="display:none;">
+    <div id="deleteInstDiv" class="panel panel-ghost" style="display:none;">
         <h3>Eliminar Instructor</h3>
         <form id="deleteInstructorForm">
             <input type="text" id="deleteInstId" placeholder="ID del Instructor" required><br>
             <button type="submit">Eliminar Instructor</button>
         </form>
     </div>
+    </section>
 
+    <section class="panel">
     <h2>Estudiantes</h2>
-    <button onclick="showSectionEst('list')">Listar</button>
-    <button onclick="showSectionEst('insert')">Insertar</button>
-    <button onclick="showSectionEst('update')">Actualizar</button>
-    <button onclick="showSectionEst('delete')">Eliminar</button>
+    <p>Registra y actualiza expedientes académicos de la comunidad estudiantil.</p>
+    <div class="btn-group">
+        <button onclick="showSectionEst('list')">Listar</button>
+        <button onclick="showSectionEst('insert')">Insertar</button>
+        <button onclick="showSectionEst('update')">Actualizar</button>
+        <button onclick="showSectionEst('delete')">Eliminar</button>
+    </div>
 
-    <div id="listEstDiv" style="display:none;">
+    <div id="listEstDiv" class="panel panel-ghost" style="display:none;">
         <div id="estudiantesList"></div>
     </div>
 
-    <div id="insertEstDiv" style="display:block;">
+    <div id="insertEstDiv" class="panel panel-ghost" style="display:block;">
         <h3>Crear Estudiante</h3>
         <form id="createEstudianteForm">
             <input type="text" id="estNombre" placeholder="Nombre" required><br>
@@ -382,7 +535,7 @@
         </form>
     </div>
 
-    <div id="updateEstDiv" style="display:none;">
+    <div id="updateEstDiv" class="panel panel-ghost" style="display:none;">
         <h3>Actualizar Estudiante</h3>
         <select id="updateEstSelect" onchange="loadEstForUpdate()">
             <option value="">Selecciona un Estudiante</option>
@@ -398,27 +551,31 @@
         </form>
     </div>
 
-    <div id="deleteEstDiv" style="display:none;">
+    <div id="deleteEstDiv" class="panel panel-ghost" style="display:none;">
         <h3>Eliminar Estudiante</h3>
         <form id="deleteEstudianteForm">
             <input type="text" id="deleteEstId" placeholder="ID del Estudiante" required><br>
             <button type="submit">Eliminar Estudiante</button>
         </form>
     </div>
+    </section>
 
+    <section class="panel">
     <h2>Inscripciones</h2>
-    <p><strong>Nota:</strong> La creación de inscripciones usa transacciones para asegurar que el curso y estudiante existan. Prueba el botón rojo para ver una transacción fallida.</p>
-    <button onclick="showSectionInsc('list')">Listar</button>
-    <button onclick="showSectionInsc('insert')">Insertar</button>
-    <button onclick="showSectionInsc('update')">Actualizar</button>
-    <button onclick="showSectionInsc('delete')">Eliminar</button>
-    <button onclick="testTransaction()" class="test-btn">Probar Transacción (ID Inválido)</button>
+    <p><strong>Nota:</strong> Motor transaccional MongoDB para garantizar integridad. Usa el botón rojo para simular fallos controlados.</p>
+    <div class="btn-group">
+        <button onclick="showSectionInsc('list')">Listar</button>
+        <button onclick="showSectionInsc('insert')">Insertar</button>
+        <button onclick="showSectionInsc('update')">Actualizar</button>
+        <button onclick="showSectionInsc('delete')">Eliminar</button>
+        <button onclick="testTransaction()" class="test-btn">Probar Transacción (ID Inválido)</button>
+    </div>
 
-    <div id="listInscDiv" style="display:none;">
+    <div id="listInscDiv" class="panel panel-ghost" style="display:none;">
         <div id="inscripcionesList"></div>
     </div>
 
-    <div id="insertInscDiv" style="display:block;">
+    <div id="insertInscDiv" class="panel panel-ghost" style="display:block;">
         <h3>Crear Inscripci�n</h3>
         <p><strong>Modo Normal:</strong> Usa los selectores desplegables</p>
         <form id="createInscripcionForm">
@@ -458,7 +615,7 @@
         </form>
     </div>
 
-    <div id="updateInscDiv" style="display:none;">
+    <div id="updateInscDiv" class="panel panel-ghost" style="display:none;">
         <h3>Actualizar Inscripci�n</h3>
         <select id="updateInscSelect" onchange="loadInscForUpdate()">
             <option value="">Selecciona una Inscripci�n</option>
@@ -484,7 +641,7 @@
         </form>
     </div>
 
-    <div id="deleteInscDiv" style="display:none;">
+    <div id="deleteInscDiv" class="panel panel-ghost" style="display:none;">
         <h3>Eliminar Inscripci�n</h3>
         <form id="deleteInscripcionForm">
             <input type="text" id="deleteInscId" placeholder="ID de la Inscripci�n" required><br>
@@ -492,8 +649,87 @@
         </form>
     </div>
 
+    </section>
+
+    </div>
+
     <script>
         const API_BASE = 'http://localhost:3000/api';
+        const currencyFormatter = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'USD' });
+
+        async function loadReport() {
+            try {
+                const res = await fetch(`${API_BASE}/report`);
+                if (!res.ok) {
+                    throw new Error('No se pudo obtener el reporte');
+                }
+                const data = await res.json();
+                renderReport(data);
+                log('Reporte ejecutivo actualizado');
+            } catch (error) {
+                log('Error al cargar reporte: ' + error.message);
+                const summary = document.getElementById('reportSummary');
+                if (summary) {
+                    summary.innerHTML = '<p>No se pudo cargar el reporte.</p>';
+                }
+            }
+        }
+
+        function renderReport(data) {
+            if (!data) return;
+            const summary = document.getElementById('reportSummary');
+            const sales = document.getElementById('reportSales');
+            const { totales, ventas } = data;
+
+            if (summary) {
+                summary.innerHTML = `
+                    ${createStatCard('Cursos', totales.cursos)}
+                    ${createStatCard('Instructores', totales.instructores)}
+                    ${createStatCard('Estudiantes', totales.estudiantes)}
+                    ${createStatCard('Inscripciones', totales.inscripciones)}
+                    ${createStatCard('Ingresos', currencyFormatter.format(ventas.totalIngresos))}
+                    ${createStatCard('Ticket Promedio', currencyFormatter.format(ventas.promedioTicket))}
+                `;
+            }
+
+            if (sales) {
+                if (!ventas.detalle.length) {
+                    sales.innerHTML = '<p>No hay ventas registradas.</p>';
+                    return;
+                }
+
+                const rows = ventas.detalle.map(item => `
+                    <div class="pixel-table-row">
+                        <div>
+                            <strong>${item.titulo}</strong>
+                            <div class="item-details">${item.categoria}</div>
+                        </div>
+                        <div>${item.inscripciones}</div>
+                        <div>${currencyFormatter.format(item.ingresos)}</div>
+                    </div>
+                `).join('');
+
+                sales.innerHTML = `
+                    <div class="pixel-table">
+                        <div class="pixel-table-header">
+                            <span>Curso</span>
+                            <span>Ventas</span>
+                            <span>Ingresos</span>
+                        </div>
+                        ${rows}
+                    </div>
+                `;
+            }
+        }
+
+        function createStatCard(label, value) {
+            return `
+                <div class="stat-card">
+                    <span>${label}</span>
+                    <strong>${value}</strong>
+                </div>
+            `;
+        }
 
         function log(message) {
             const logDiv = document.getElementById('log');
@@ -865,6 +1101,7 @@
                     alert('Curso eliminado: ' + JSON.stringify(data));
                     log(`Curso eliminado exitosamente: ${JSON.stringify(data)}`);
                     listCursos();
+                    loadReport();
                 } catch (error) {
                     alert('Error: ' + error.message);
                     log(`Error en DELETE /api/cursos/${id}: ${error.message}`);
@@ -883,6 +1120,7 @@
                     alert('Instructor eliminado: ' + JSON.stringify(data));
                     log(`Instructor eliminado exitosamente: ${JSON.stringify(data)}`);
                     listInstructores();
+                    loadReport();
                 } catch (error) {
                     alert('Error: ' + error.message);
                     log(`Error en DELETE /api/instructores/${id}: ${error.message}`);
@@ -901,6 +1139,7 @@
                     alert('Estudiante eliminado: ' + JSON.stringify(data));
                     log(`Estudiante eliminado exitosamente: ${JSON.stringify(data)}`);
                     listEstudiantes();
+                    loadReport();
                 } catch (error) {
                     alert('Error: ' + error.message);
                     log(`Error en DELETE /api/estudiantes/${id}: ${error.message}`);
@@ -976,6 +1215,7 @@
                 alert('Curso creado: ' + JSON.stringify(data));
                 log(`Curso creado exitosamente: ${JSON.stringify(data)}`);
                 listCursos();
+                loadReport();
             } catch (error) {
                 alert('Error: ' + error.message);
                 log(`Error en POST /api/cursos: ${error.message}`);
@@ -999,6 +1239,7 @@
                 alert('Instructor creado: ' + JSON.stringify(data));
                 log('Instructor creado: ' + instructor.nombre);
                 listInstructores();
+                loadReport();
             } catch (error) {
                 alert('Error: ' + error.message);
                 log('Error al crear instructor: ' + error.message);
@@ -1024,6 +1265,7 @@
                 alert('Inscripci�n creada: ' + JSON.stringify(data));
                 log(`Inscripci�n creada exitosamente: ${JSON.stringify(data)}`);
                 listInscripciones();
+                loadReport();
             } catch (error) {
                 alert('Error: ' + error.message);
                 log('Error al crear inscripci�n: ' + error.message);
@@ -1049,6 +1291,7 @@
                 alert('Inscripci�n creada (Manual): ' + JSON.stringify(data));
                 log(`Inscripci�n creada exitosamente (Manual): ${JSON.stringify(data)}`);
                 listInscripciones();
+                loadReport();
             } catch (error) {
                 alert('Error (Manual): ' + error.message);
                 log('Error al crear inscripci�n (Manual): ' + error.message);
@@ -1074,6 +1317,7 @@
                 alert('Instructor actualizado: ' + JSON.stringify(data));
                 log(`Instructor actualizado exitosamente: ${JSON.stringify(data)}`);
                 listInstructores();
+                loadReport();
             } catch (error) {
                 alert('Error: ' + error.message);
                 log(`Error en PUT /api/instructores/${id}: ${error.message}`);
@@ -1099,6 +1343,7 @@
                 alert('Estudiante actualizado: ' + JSON.stringify(data));
                 log(`Estudiante actualizado exitosamente: ${JSON.stringify(data)}`);
                 listEstudiantes();
+                loadReport();
             } catch (error) {
                 alert('Error: ' + error.message);
                 log(`Error en PUT /api/estudiantes/${id}: ${error.message}`);
@@ -1125,6 +1370,7 @@
                 alert('Inscripci�n actualizada: ' + JSON.stringify(data));
                 log(`Inscripci�n actualizada exitosamente: ${JSON.stringify(data)}`);
                 listInscripciones();
+                loadReport();
             } catch (error) {
                 alert('Error: ' + error.message);
                 log(`Error en PUT /api/inscripciones/${id}: ${error.message}`);
@@ -1143,6 +1389,7 @@
                 alert('Inscripci�n eliminada: ' + JSON.stringify(data));
                 log(`Inscripci�n eliminada exitosamente: ${JSON.stringify(data)}`);
                 listInscripciones();
+                loadReport();
             } catch (error) {
                 alert('Error: ' + error.message);
                 log(`Error en DELETE /api/inscripciones/${id}: ${error.message}`);
@@ -1168,6 +1415,7 @@
                 alert('Estudiante creado: ' + JSON.stringify(data));
                 log(`Estudiante creado exitosamente: ${JSON.stringify(data)}`);
                 listEstudiantes();
+                loadReport();
             } catch (error) {
                 alert('Error: ' + error.message);
                 log(`Error en POST /api/estudiantes: ${error.message}`);
@@ -1199,6 +1447,7 @@
                 alert('Curso actualizado: ' + JSON.stringify(data));
                 log(`Curso actualizado exitosamente: ${JSON.stringify(data)}`);
                 listCursos();
+                loadReport();
             } catch (error) {
                 alert('Error: ' + error.message);
                 log(`Error en PUT /api/cursos/${id}: ${error.message}`);
@@ -1425,6 +1674,7 @@
         loadEstudiantesForInsc();
         loadCursosForUpdateInsc();
         loadEstudiantesForUpdateInsc();
+        loadReport();
         showSection('insert');
     </script>
 </body>
